@@ -8,6 +8,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="theme.js"></script>
+    <script src="i18n.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -32,7 +34,6 @@
         <aside>
             <div class="sidebar-menu">
 
-                <!-- Пластик -->
                 <div class="menu-block">
                     <div class="menu-item" data-category="plastic">
                         <i class="fa-solid fa-recycle"></i>
@@ -48,7 +49,6 @@
                     </div>
                 </div>
 
-                <!-- Бумага -->
                 <div class="menu-block">
                     <div class="menu-item" data-category="paper">
                         <i class="fa-solid fa-newspaper"></i>
@@ -64,7 +64,6 @@
                     </div>
                 </div>
 
-                <!-- Стекло -->
                 <div class="menu-block">
                     <div class="menu-item" data-category="glass">
                         <i class="fa-solid fa-wine-bottle"></i>
@@ -80,7 +79,6 @@
                     </div>
                 </div>
 
-                <!-- Батарейки -->
                 <div class="menu-block">
                     <div class="menu-item" data-category="batteries">
                         <i class="fa-solid fa-battery-full"></i>
@@ -96,7 +94,6 @@
                     </div>
                 </div>
 
-                <!-- Одежда -->
                 <div class="menu-block">
                     <div class="menu-item" data-category="clothes">
                         <i class="fa-solid fa-shirt"></i>
@@ -117,31 +114,101 @@
 
         <main>
             <section class="hero-banner">
-                <h1>Сдавайте вторсырье правильно</h1>
-                <p>Находите ближайшие пункты приема, выполняйте эко-задания и получайте бонусы за заботу о планете.</p>
-                <a href="map.html" class="cta-btn">Найти пункт приема</a>
+                <div class="hero-copy">
+                    <div class="hero-eyebrow"><span class="hero-live-dot"></span> LOCAL ORDER <span class="hero-eyebrow-divider">/</span> TASHKENT</div>
+                    <h1>Сдавайте вторсырье правильно</h1>
+                    <p>Находите ближайшие пункты приема, выполняйте эко-задания и получайте бонусы за заботу о планете.</p>
+                    <div class="hero-actions">
+                        <a href="map.html" class="cta-btn">Найти пункт приема <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+                        <a href="#tasks-section" class="hero-secondary-link">Открыть задания <i class="fa-solid fa-arrow-down"></i></a>
+                    </div>
+                    <div class="hero-social-proof">
+                        <span class="hero-proof-icon"><i class="fa-solid fa-earth-asia"></i></span>
+                        <span><strong>Каждый шаг имеет значение</strong><small>Начните с одного полезного дела</small></span>
+                    </div>
+                </div>
+                <div class="hero-art" aria-hidden="true">
+                    <div class="hero-art-grid"></div>
+                    <div class="hero-orbit hero-orbit-outer"></div>
+                    <div class="hero-orbit hero-orbit-inner"></div>
+                    <div class="hero-globe">
+                        <i class="fa-solid fa-earth-asia"></i>
+                        <span class="hero-globe-leaf"><i class="fa-solid fa-leaf"></i></span>
+                    </div>
+                    <div class="hero-float-card hero-float-locations">
+                        <span class="hero-float-icon"><i class="fa-solid fa-location-dot"></i></span>
+                        <span><strong>07</strong><small>пунктов на карте</small></span>
+                        <i class="fa-solid fa-arrow-up-right-from-square hero-float-arrow"></i>
+                    </div>
+                    <div class="hero-float-card hero-float-impact">
+                        <span class="hero-impact-spark"><i class="fa-solid fa-sparkles"></i></span>
+                        <span><strong>Вы меняете мир</strong><small>Начните сегодня</small></span>
+                    </div>
+                    <span class="hero-art-caption">MAKE EVERY<br>CHOICE COUNT</span>
+                </div>
             </section>
 
-            <!-- ЭКО-ЗАДАНИЯ (подгружаются из script.js) -->
+            <section class="scan-map-section" aria-label="Сканер и карта пунктов приёма вторсырья">
+                <article class="home-feature-card home-scanner-card" data-reveal>
+                    <div class="home-feature-heading">
+                        <div class="home-feature-icon"><i class="fa-solid fa-qrcode"></i></div>
+                        <div>
+                            <span class="home-feature-kicker">Сдавай с пользой</span>
+                            <h2>Сканер сдачи</h2>
+                        </div>
+                    </div>
+                    <p class="home-feature-description">Отсканируйте QR-код пункта приёма и покажите его сотруднику, чтобы подтвердить сдачу вторсырья.</p>
+                    <div class="home-scanner-frame">
+                        <div class="home-scanner-corners" aria-hidden="true"></div>
+                        <div id="home-qr-reader" aria-label="Камера для сканирования QR-кода"></div>
+                        <div class="home-scanner-placeholder" id="home-scanner-placeholder">
+                            <span class="home-scanner-pulse"><i class="fa-solid fa-camera"></i></span>
+                            <span>Камера запустится по нажатию</span>
+                        </div>
+                    </div>
+                    <div class="home-scanner-actions">
+                        <button class="home-scan-btn" id="home-scan-start" type="button">
+                            <i class="fa-solid fa-camera"></i> Включить камеру
+                        </button>
+                        <button class="home-scan-stop" id="home-scan-stop" type="button" hidden>
+                            Остановить
+                        </button>
+                    </div>
+                    <p class="home-scanner-status" id="home-scanner-status" role="status" aria-live="polite">Камера работает только после вашего разрешения. Изображение не отправляется на сервер.</p>
+                    <div class="home-scan-result" id="home-scan-result" hidden>
+                        <i class="fa-solid fa-circle-check"></i>
+                        <span id="home-scan-code"></span>
+                    </div>
+                </article>
+
+                <article class="home-feature-card home-map-card" data-reveal>
+                    <div class="home-map-heading">
+                        <div>
+                            <span class="home-feature-kicker">Ташкент</span>
+                            <h2>Пункты приёма рядом</h2>
+                        </div>
+                        <a href="map.html" class="home-map-all-link">Все пункты <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+                    </div>
+                    <p class="home-feature-description">Найдите пункт, где принимают вторсырьё, и постройте маршрут.</p>
+                    <div class="map-container">
+                        <div id="map" aria-label="Карта пунктов приёма вторсырья в Ташкенте"></div>
+                    </div>
+                    <p class="home-map-note"><i class="fa-solid fa-circle-info"></i> Условия и наличие оплаты уточняйте в пункте: они зависят от материала и веса.</p>
+                </article>
+            </section>
+
             <section id="tasks-section">
                 <h2 class="section-title">Эко-Задания</h2>
                 <div class="cards-grid" id="home-tasks-grid">
-                    <!-- Заполняется через script.js -->
                 </div>
             </section>
 
-            <!-- НИЖНЯЯ СЕКЦИЯ: КАРТА + НАГРАДЫ -->
             <section class="bottom-section">
-                <div class="map-container">
-                    <div id="map"></div>
-                </div>
-
                 <div class="info-panel">
                     <h4>Ваши баллы: <span id="user-points">0</span></h4>
                     <p class="info-subtitle">Обменивайте баллы на скидки у наших партнеров!</p>
 
                     <div id="home-rewards-list">
-                        <!-- Заполняется через script.js -->
                     </div>
 
                     <a href="rewards.html" class="all-rewards-btn">
@@ -152,7 +219,6 @@
         </main>
     </div>
 
-    <!-- МОДАЛЬНОЕ ОКНО АВТОРИЗАЦИИ -->
     <div class="modal-overlay" id="auth-modal">
         <div class="modal">
             <button class="modal-close" id="modal-close">
@@ -211,6 +277,7 @@
     </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
     <script src="auth.js"></script>
     <script src="script.js"></script>
 </body>

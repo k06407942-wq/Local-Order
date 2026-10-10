@@ -1,12 +1,6 @@
-// ============================================
-// СИСТЕМА АВТОРИЗАЦИИ + РЕФЕРАЛЬНАЯ ПРОГРАММА
-// ============================================
-
-// Ключи в localStorage
 const USERS_KEY = 'localorder_users';
 const CURRENT_KEY = 'localorder_current';
 
-// --- Утилиты ---
 function getUsers() {
     return JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
 }
@@ -30,14 +24,12 @@ function logout() {
     window.location.href = 'index.html';
 }
 
-// --- Генерация уникального реферального кода ---
 function generateRefCode(name) {
     const clean = name.replace(/[^a-zA-Zа-яА-Я]/g, '').slice(0, 4).toUpperCase() || 'ECO';
     const num = Math.floor(1000 + Math.random() * 9000);
     return clean + num;
 }
 
-// --- Регистрация ---
 function registerUser(name, email, password) {
     const users = getUsers();
 
@@ -45,7 +37,6 @@ function registerUser(name, email, password) {
         return { ok: false, error: 'Пользователь с таким email уже существует' };
     }
 
-    // Проверяем реферальный код из URL
     const urlParams = new URLSearchParams(window.location.search);
     const refCode = urlParams.get('ref');
     let referrer = null;
@@ -71,7 +62,6 @@ function registerUser(name, email, password) {
 
     users.push(user);
 
-    // Начисляем бонус пригласившему
     if (referrer) {
         referrer.points = (referrer.points || 0) + 200;
         referrer.invitedFriends = referrer.invitedFriends || [];
@@ -84,14 +74,12 @@ function registerUser(name, email, password) {
     return { ok: true, user, referred: !!referrer };
 }
 
-// --- Вход ---
 function loginUser(email, password) {
     const user = getUsers().find(u => u.email === email);
 
     if (!user) return { ok: false, error: 'Пользователь не найден' };
     if (user.password !== password) return { ok: false, error: 'Неверный пароль' };
 
-    // Обновляем старых пользователей (у кого нет refCode)
     let needUpdate = false;
     if (!user.refCode) {
         user.refCode = generateRefCode(user.name);
@@ -118,7 +106,6 @@ function loginUser(email, password) {
     return { ok: true, user };
 }
 
-// --- Обновить пользователя ---
 function updateUser(updatedUser) {
     const users = getUsers();
     const idx = users.findIndex(u => u.email === updatedUser.email);
@@ -128,9 +115,6 @@ function updateUser(updatedUser) {
     }
 }
 
-// ============================================
-// РЕНДЕР ШАПКИ
-// ============================================
 function renderAuthArea() {
     const area = document.getElementById('auth-area');
     if (!area) return;
@@ -175,9 +159,6 @@ function renderAuthArea() {
     }
 }
 
-// ============================================
-// МОДАЛЬНОЕ ОКНО АВТОРИЗАЦИИ
-// ============================================
 function openAuthModal(tab = 'login') {
     const modal = document.getElementById('auth-modal');
     if (!modal) return;
@@ -201,18 +182,13 @@ function switchTab(tab) {
     document.querySelectorAll('.form-error').forEach(e => e.textContent = '');
 }
 
-// ============================================
-// ИНИЦИАЛИЗАЦИЯ
-// ============================================
 document.addEventListener('DOMContentLoaded', () => {
     renderAuthArea();
 
-    // Табы
     document.querySelectorAll('.modal-tab').forEach(tab => {
         tab.addEventListener('click', () => switchTab(tab.dataset.tab));
     });
 
-    // Закрытие модалки
     const modal = document.getElementById('auth-modal');
     if (modal) {
         const closeBtn = document.getElementById('modal-close');
@@ -223,7 +199,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Форма входа
     const loginForm = document.getElementById('form-login');
     if (loginForm) {
         loginForm.addEventListener('submit', (e) => {
@@ -237,7 +212,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 renderAuthArea();
                 loginForm.reset();
 
-                // Если мы на странице профиля — перезагружаем
                 if (window.location.pathname.includes('profile') ||
                     window.location.pathname.includes('tasks') ||
                     window.location.pathname.includes('map')) {
@@ -249,7 +223,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Форма регистрации
     const registerForm = document.getElementById('form-register');
     if (registerForm) {
         registerForm.addEventListener('submit', (e) => {
@@ -275,7 +248,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 renderAuthArea();
                 registerForm.reset();
 
-                // Приветствие с информацией о реферальной программе
                 if (result.referred) {
                     setTimeout(() => {
                         alert('🎁 Вы зарегистрировались по приглашению! Ваш друг получил +200 баллов');
@@ -293,7 +265,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Горячие клавиши
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
             closeAuthModal();
@@ -307,9 +278,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// ============================================
-// ЭКСПОРТ
-// ============================================
 window.LocalOrder = {
     getCurrentUser,
     updateUser,

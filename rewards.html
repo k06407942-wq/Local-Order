@@ -7,6 +7,8 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <script src="theme.js"></script>
+    <script src="i18n.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -173,6 +175,16 @@
                 <i class="fa-solid fa-xmark"></i>
             </button>
             <div id="auction-content"></div>
+        </div>
+    </div>
+
+    <!-- ИНФОРМАЦИЯ О ПАРТНЁРЕ -->
+    <div class="modal-overlay" id="partner-info-modal">
+        <div class="modal partner-info-modal" role="dialog" aria-modal="true" aria-labelledby="partner-info-title">
+            <button class="modal-close" id="partner-info-close" aria-label="Закрыть">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div id="partner-info-content"></div>
         </div>
     </div>
 

@@ -47,12 +47,12 @@ const AUCTIONS = [
 // ПАРТНЁРЫ
 // ============================================
 const PARTNERS = [
-    { name: 'Korzinka', logo: 'K', color: '#d32f2f', rewards: 3 },
-    { name: 'Green Bean', logo: '☕', color: '#6d4c41', rewards: 2 },
-    { name: 'Makro', logo: 'M', color: '#1976d2', rewards: 1 },
-    { name: 'EcoMarket', logo: '🌿', color: '#388e3c', rewards: 3 },
-    { name: 'FoodZone', logo: '🍔', color: '#f57c00', rewards: 2 },
-    { name: 'CinemaPark', logo: '🎬', color: '#7b1fa2', rewards: 2 }
+    { name: 'Korzinka', logo: 'K', color: '#d32f2f', description: 'Продукты и товары на каждый день' },
+    { name: 'Green Bean', logo: '☕', color: '#6d4c41', description: 'Кофе и напитки для хорошего дня' },
+    { name: 'Makro', logo: 'M', color: '#1976d2', description: 'Покупки для дома и всей семьи' },
+    { name: 'EcoMarket', logo: '🌿', color: '#388e3c', description: 'Полезные товары для экологичного образа жизни' },
+    { name: 'FoodZone', logo: '🍔', color: '#f57c00', description: 'Еда и впечатления для отдыха' },
+    { name: 'CinemaPark', logo: '🎬', color: '#7b1fa2', description: 'Кино и развлечения для всей семьи' }
 ];
 
 // ============================================
@@ -164,12 +164,81 @@ function renderPartners() {
     if (!container) return;
 
     container.innerHTML = PARTNERS.map(p => `
-        <div class="partner-card">
+        <button class="partner-card" type="button" data-partner="${p.name}" aria-label="Подробнее о партнёре ${p.name}">
             <div class="partner-logo" style="background: ${p.color};">${p.logo}</div>
             <div class="partner-name">${p.name}</div>
-            <div class="partner-rewards">${p.rewards} награды</div>
-        </div>
+            <div class="partner-rewards">${REWARDS.filter(reward => reward.partner === p.name).length} награды</div>
+            <span class="partner-card-hint">Подробнее <i class="fa-solid fa-arrow-up-right-from-square"></i></span>
+        </button>
     `).join('');
+
+    container.addEventListener('click', (event) => {
+        const card = event.target.closest('[data-partner]');
+        if (card) openPartnerInfo(card.dataset.partner);
+    });
+}
+
+function openPartnerInfo(partnerName) {
+    const partner = PARTNERS.find(item => item.name === partnerName);
+    if (!partner) return;
+
+    const rewards = REWARDS.filter(reward => reward.partner === partner.name);
+    const searchQuery = encodeURIComponent(`${partner.name}, Tashkent, Uzbekistan`);
+    const content = document.getElementById('partner-info-content');
+    const modal = document.getElementById('partner-info-modal');
+
+    content.innerHTML = `
+        <div class="partner-info-header">
+            <div class="partner-logo partner-info-logo" style="background: ${partner.color};">${partner.logo}</div>
+            <div>
+                <span class="partner-info-eyebrow"><i class="fa-solid fa-leaf"></i> Партнёр Local Order</span>
+                <h2 id="partner-info-title">${partner.name}</h2>
+                <p>${partner.description}</p>
+            </div>
+        </div>
+        <div class="partner-info-layout">
+            <section class="partner-map-section" aria-label="Карта филиалов партнёра">
+                <div class="partner-info-section-title">
+                    <span class="partner-info-section-icon"><i class="fa-solid fa-location-dot"></i></span>
+                    <div><h3>Где найти</h3><p>Филиалы в Ташкенте</p></div>
+                </div>
+                <div class="partner-map-frame">
+                    <iframe
+                        src="https://maps.google.com/maps?q=${searchQuery}&output=embed"
+                        title="Карта филиалов ${partner.name} в Ташкенте"
+                        loading="lazy"
+                        referrerpolicy="no-referrer-when-downgrade">
+                    </iframe>
+                </div>
+                <a class="partner-map-link" href="https://www.google.com/maps/search/?api=1&query=${searchQuery}" target="_blank" rel="noopener noreferrer">
+                    Открыть карту <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                </a>
+            </section>
+            <section class="partner-offers-section" aria-label="Награды партнёра">
+                <div class="partner-info-section-title">
+                    <span class="partner-info-section-icon"><i class="fa-solid fa-gift"></i></span>
+                    <div><h3>Что можно получить</h3><p>${rewards.length} ${rewards.length === 1 ? 'предложение' : 'предложения'} за баллы</p></div>
+                </div>
+                <div class="partner-offers-list">
+                    ${rewards.map(reward => `
+                        <article class="partner-offer">
+                            <div class="partner-offer-icon" style="background: ${reward.color}18; color: ${reward.color};">${reward.emoji}</div>
+                            <div class="partner-offer-info">
+                                <h4>${reward.title}</h4>
+                                <p>${reward.desc}</p>
+                                <span class="partner-offer-value"><i class="fa-solid fa-tag"></i> ${reward.value}</span>
+                            </div>
+                            <button class="partner-offer-btn" type="button" data-reward="${reward.id}">
+                                ${reward.price} <span>💎</span>
+                            </button>
+                        </article>
+                    `).join('')}
+                </div>
+            </section>
+        </div>
+    `;
+
+    modal.classList.add('open');
 }
 
 // ============================================
@@ -601,7 +670,7 @@ function setupModals() {
     };
 
     // Все кнопки закрытия
-    ['exchange-close', 'coupon-close', 'auction-close', 'partner-close'].forEach(id => {
+    ['exchange-close', 'coupon-close', 'auction-close', 'partner-close', 'partner-info-close'].forEach(id => {
         const btn = document.getElementById(id);
         if (btn) btn.addEventListener('click', () => {
             const modal = btn.closest('.modal-overlay');
@@ -610,13 +679,22 @@ function setupModals() {
     });
 
     // Закрытие по клику на фон
-    ['exchange-modal', 'coupon-modal', 'auction-modal', 'partner-modal'].forEach(id => {
+    ['exchange-modal', 'coupon-modal', 'auction-modal', 'partner-modal', 'partner-info-modal'].forEach(id => {
         const modal = document.getElementById(id);
         if (modal) {
             modal.addEventListener('click', (e) => {
                 if (e.target === modal) modal.classList.remove('open');
             });
         }
+    });
+
+    document.getElementById('partner-info-content').addEventListener('click', (event) => {
+        const offerButton = event.target.closest('[data-reward]');
+        if (!offerButton) return;
+
+        const rewardId = offerButton.dataset.reward;
+        closeModal('partner-info-modal');
+        window.openExchange(rewardId);
     });
 
     // Форма партнёра

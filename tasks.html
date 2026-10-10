@@ -7,9 +7,10 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <script src="theme.js"></script>
+    <script src="i18n.js"></script>
     <link rel="stylesheet" href="style.css">
 
-    <!-- QR-сканер -->
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 </head>
 <body>
@@ -41,9 +42,6 @@
 
         <main>
 
-            <!-- ============================================
-                 ВЕРХНИЙ БЛОК: УРОВЕНЬ И ПРОГРЕСС
-                 ============================================ -->
             <section class="tasks-hero">
                 <div class="tasks-hero-title">
                     <h1>🎯 Эко-Задания</h1>
@@ -76,9 +74,6 @@
                 </div>
             </section>
 
-            <!-- ============================================
-                 ДОСТИЖЕНИЯ
-                 ============================================ -->
             <section class="achievements-section">
                 <h2 class="section-title">
                     🏆 Достижения
@@ -87,13 +82,9 @@
                 <div class="achievements-grid" id="achievements-grid"></div>
             </section>
 
-            <!-- ============================================
-                 КОМАНДНЫЕ МИССИИ
-                 ============================================ -->
             <section class="team-missions">
                 <h2 class="section-title">👥 Командные миссии</h2>
 
-                <!-- Если НЕ в команде -->
                 <div class="team-card" id="team-card-no">
                     <div class="team-icon">🤝</div>
                     <div class="team-info">
@@ -110,7 +101,6 @@
                     </div>
                 </div>
 
-                <!-- Если В команде -->
                 <div class="team-card" id="team-card-yes" style="display:none;">
                     <div class="team-icon">🏆</div>
                     <div class="team-info">
@@ -126,9 +116,6 @@
                 </div>
             </section>
 
-            <!-- ============================================
-                 ЧЕЛЛЕНДЖ ГОРОДА
-                 ============================================ -->
             <section class="city-challenge">
                 <div class="city-challenge-bg">
                     <div class="city-challenge-icon">🌍</div>
@@ -148,9 +135,6 @@
                 </div>
             </section>
 
-            <!-- ============================================
-                 ФИЛЬТРЫ ЗАДАНИЙ
-                 ============================================ -->
             <section>
                 <h2 class="section-title">📋 Все задания</h2>
 
@@ -173,9 +157,6 @@
                 <div class="tasks-grid" id="tasks-grid"></div>
             </section>
 
-            <!-- ============================================
-                 QR-КОДЫ ПУНКТОВ ПРИЁМА
-                 ============================================ -->
             <section class="qr-showcase">
                 <h2 class="section-title">📱 QR-коды пунктов приёма</h2>
                 <p class="qr-subtitle">
@@ -189,9 +170,6 @@
                 </button>
             </section>
 
-            <!-- ============================================
-                 ТОП-10 ПОЛЬЗОВАТЕЛЕЙ
-                 ============================================ -->
             <section class="leaderboard-section">
                 <h2 class="section-title">🏅 Топ-10 недели</h2>
                 <div class="leaderboard" id="leaderboard"></div>
@@ -200,9 +178,6 @@
         </main>
     </div>
 
-    <!-- ============================================
-         МОДАЛКА ЗАДАНИЯ
-         ============================================ -->
     <div class="modal-overlay" id="task-modal">
         <div class="modal">
             <button class="modal-close" id="task-modal-close">
@@ -212,9 +187,6 @@
         </div>
     </div>
 
-    <!-- ============================================
-         МОДАЛКА QR-СКАНЕРА
-         ============================================ -->
     <div class="modal-overlay" id="qr-modal">
         <div class="modal qr-modal">
             <button class="modal-close" id="qr-modal-close">
@@ -242,9 +214,6 @@
         </div>
     </div>
 
-    <!-- ============================================
-         МОДАЛКА КОМАНДЫ
-         ============================================ -->
     <div class="modal-overlay" id="team-modal">
         <div class="modal">
             <button class="modal-close" id="team-modal-close">
@@ -268,9 +237,6 @@
         </div>
     </div>
 
-    <!-- ============================================
-         МОДАЛКА АВТОРИЗАЦИИ
-         ============================================ -->
     <div class="modal-overlay" id="auth-modal">
         <div class="modal">
             <button class="modal-close" id="modal-close">

@@ -8,11 +8,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="theme.js"></script>
+    <script src="i18n.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- Шапка -->
     <header>
         <div class="logo">
             <i class="fa-solid fa-recycle"></i>
@@ -27,13 +28,11 @@
             </ul>
         </nav>
         <div id="auth-area">
-    <!-- Сюда JS подставит кнопки "Войти" или профиль пользователя -->
         </div>
     </header>
 
     <div class="container">
 
-        <!-- Сайдбар (такой же, но для навигации) -->
         <aside>
             <div class="sidebar-menu">
                 <a href="index.html" class="back-btn">
@@ -42,10 +41,8 @@
             </div>
         </aside>
 
-        <!-- Контент категории -->
         <main>
             
-            <!-- Хлебные крошки -->
             <div class="breadcrumbs">
                 <a href="index.html">Главная</a>
                 <span>/</span>
@@ -54,7 +51,6 @@
                 <span id="breadcrumb-sub" class="active-crumb">ПЭТ-бутылки</span>
             </div>
 
-            <!-- Заголовок -->
             <section class="category-hero">
                 <div class="category-icon" id="cat-icon">
                     <i class="fa-solid fa-bottle-water"></i>
@@ -65,7 +61,6 @@
                 </div>
             </section>
 
-            <!-- Факт -->
             <section class="fact-block">
                 <div class="fact-icon"><i class="fa-solid fa-lightbulb"></i></div>
                 <div>
@@ -74,7 +69,6 @@
                 </div>
             </section>
 
-            <!-- Что принимают / не принимают -->
             <section class="info-grid">
                 <div class="info-card info-accept">
                     <div class="info-header">
@@ -94,7 +88,6 @@
                 </div>
             </section>
 
-            <!-- Бонус -->
             <section class="bonus-block">
                 <i class="fa-solid fa-coins"></i>
                 <div>
@@ -103,7 +96,6 @@
                 </div>
             </section>
 
-            <!-- Карта пунктов -->
             <section>
                 <h2 class="section-title">Пункты приёма рядом</h2>
                 <div class="map-container" style="height: 400px;">

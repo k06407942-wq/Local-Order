@@ -8,11 +8,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="theme.js"></script>
+    <script src="i18n.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="map-page">
 
-    <!-- Шапка -->
     <header>
         <div class="logo">
             <i class="fa-solid fa-recycle"></i>
@@ -29,25 +30,20 @@
         <div id="auth-area"></div>
     </header>
 
-    <!-- Основной контент карты -->
     <div class="map-layout">
         
-        <!-- ЛЕВАЯ ПАНЕЛЬ: Фильтры и список -->
         <aside class="map-sidebar">
             
-            <!-- Поиск -->
             <div class="search-box">
                 <i class="fa-solid fa-magnifying-glass"></i>
                 <input type="text" id="search-input" placeholder="Поиск по адресу или названию...">
             </div>
 
-            <!-- Кнопка "Моё местоположение" -->
             <button class="geo-btn" id="geo-btn">
                 <i class="fa-solid fa-location-crosshairs"></i>
                 Определить моё местоположение
             </button>
 
-            <!-- Фильтры категорий -->
             <div class="filter-section">
                 <div class="filter-title">Категории</div>
                 <div class="filter-chips">
@@ -74,7 +70,6 @@
                 </div>
             </div>
 
-            <!-- Радиус -->
             <div class="filter-section">
                 <div class="filter-title">Радиус поиска</div>
                 <div class="radius-options">
@@ -85,35 +80,29 @@
                 </div>
             </div>
 
-            <!-- Кнопка добавления пункта -->
             <button class="add-point-btn" id="open-add-modal">
                 <i class="fa-solid fa-plus"></i>
                 Добавить пункт
             </button>
 
-            <!-- Список найденных пунктов -->
             <div class="points-list">
                 <div class="points-header">
                     <span id="points-count">Найдено: 7</span>
                 </div>
                 <div id="points-list-container">
-                    <!-- Заполняется JS -->
                 </div>
             </div>
         </aside>
 
-        <!-- ПРАВАЯ ЧАСТЬ: Карта -->
         <div class="map-wrapper">
             <div id="map"></div>
 
-            <!-- Плавающая кнопка наверх -->
             <button class="map-float-btn" id="reset-view" title="Показать все пункты">
                 <i class="fa-solid fa-expand"></i>
             </button>
         </div>
     </div>
 
-    <!-- Модалка добавления пункта -->
     <div class="modal-overlay" id="add-modal">
         <div class="modal">
             <button class="modal-close" id="add-close">
@@ -151,7 +140,6 @@
         </div>
     </div>
 
-    <!-- Модалка авторизации (такая же, как везде) -->
     <div class="modal-overlay" id="auth-modal">
         <div class="modal">
             <button class="modal-close" id="modal-close">

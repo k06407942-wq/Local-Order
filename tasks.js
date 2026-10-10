@@ -1,7 +1,3 @@
-// ============================================
-// ДАННЫЕ
-// ============================================
-
 const TASKS = [
     {
         id: 'tree',
@@ -161,7 +157,6 @@ const TASKS = [
     }
 ];
 
-// Уровни
 const LEVELS = [
     { name: 'Новичок', icon: '🌱', min: 0, max: 500, color: '#4caf50' },
     { name: 'Эко-друг', icon: '🌿', min: 500, max: 2000, color: '#66bb6a' },
@@ -169,7 +164,6 @@ const LEVELS = [
     { name: 'Защитник природы', icon: '🏆', min: 5000, max: 99999, color: '#ffc107' }
 ];
 
-// Достижения
 const ACHIEVEMENTS = [
     { id: 'first', icon: '🥇', title: 'Первая сдача', desc: 'Сдать первое вторсырьё', condition: (u) => (u.history?.length || 0) >= 1 },
     { id: 'plastic5', icon: '🧴', title: '5 кг пластика', desc: 'Сдать 5 кг пластика', condition: (u) => (u.history?.filter(h => h.category === 'plastic').reduce((s, h) => s + h.weight, 0) || 0) >= 5 },
@@ -181,7 +175,6 @@ const ACHIEVEMENTS = [
     { id: 'top10', icon: '🏅', title: 'Топ-10', desc: 'Войти в топ-10 недели', condition: (u) => false }
 ];
 
-// Топ-10 (демо-данные)
 const LEADERBOARD = [
     { name: 'Иван П.', points: 2340, avatar: '🌳', rank: 1 },
     { name: 'Азиза К.', points: 1890, avatar: '🌿', rank: 2 },
@@ -195,16 +188,11 @@ const LEADERBOARD = [
     { name: 'Гульнара А.', points: 650, avatar: '🌻', rank: 10 }
 ];
 
-// ============================================
-// ИНИЦИАЛИЗАЦИЯ
-// ============================================
 document.addEventListener('DOMContentLoaded', () => {
     const user = window.LocalOrder.getCurrentUser();
 
-    // Данные по умолчанию для неавторизованных
     const userData = user || { points: 0, history: [], completedTasks: [] };
 
-    // Уровень пользователя
     const points = userData.points || 0;
     const level = LEVELS.find(l => points >= l.min && points < l.max) || LEVELS[0];
     const levelProgress = ((points - level.min) / (level.max - level.min)) * 100;
@@ -216,20 +204,16 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('level-progress-bar').style.width = Math.min(levelProgress, 100) + '%';
     document.getElementById('user-total-points').textContent = points;
 
-    // Прогресс заданий
     const completed = userData.completedTasks?.length || 0;
     const total = TASKS.length;
     document.getElementById('tasks-done').textContent = completed;
     document.getElementById('tasks-total').textContent = total;
     document.getElementById('tasks-progress-bar').style.width = ((completed / total) * 100) + '%';
 
-    // Достижения
     renderAchievements(userData);
 
-    // Задания
     renderTasks(userData, 'all');
 
-    // Фильтры
     document.querySelectorAll('.filter-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
@@ -238,10 +222,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Топ-10
     renderLeaderboard();
 
-    // Модалка
     document.getElementById('task-modal-close').addEventListener('click', () => {
         document.getElementById('task-modal').classList.remove('open');
     });
@@ -251,7 +233,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // QR модалка
     document.getElementById('qr-modal-close').addEventListener('click', () => {
         document.getElementById('qr-modal').classList.remove('open');
     });
@@ -265,13 +246,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const code = document.getElementById('qr-input').value.trim().toUpperCase();
         const err = document.getElementById('qr-error');
 
-        // Простая проверка: любой код из 6+ символов считается валидным
         if (code.length < 4) {
             err.textContent = 'Код должен быть минимум 4 символа';
             return;
         }
 
-        // Начисляем баллы за задание
         const taskId = document.getElementById('qr-modal').dataset.taskId;
         const task = TASKS.find(t => t.id === taskId);
 
@@ -287,9 +266,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// ============================================
-// РЕНДЕР ДОСТИЖЕНИЙ
-// ============================================
 function renderAchievements(user) {
     const container = document.getElementById('achievements-grid');
     let unlockedCount = 0;
@@ -313,9 +289,6 @@ function renderAchievements(user) {
     document.getElementById('achievements-count').textContent = `${unlockedCount} из ${ACHIEVEMENTS.length}`;
 }
 
-// ============================================
-// РЕНДЕР ЗАДАНИЙ
-// ============================================
 function renderTasks(user, filter = 'all') {
     const container = document.getElementById('tasks-grid');
     const completed = user.completedTasks || [];
@@ -376,9 +349,6 @@ function renderTasks(user, filter = 'all') {
     }
 }
 
-// ============================================
-// МОДАЛКА ЗАДАНИЯ
-// ============================================
 window.openTask = function(taskId) {
     const user = window.LocalOrder.getCurrentUser();
     if (!user) {
@@ -443,38 +413,27 @@ window.openQR = function(taskId) {
     document.getElementById('qr-error').textContent = '';
 };
 
-// ============================================
-// ВЫПОЛНЕНИЕ ЗАДАНИЯ
-// ============================================
 window.completeTask = function(user, task) {
     if (!user || !task) return;
 
-    // Добавляем баллы
     user.points = (user.points || 0) + task.reward;
 
-    // Добавляем в выполненные
     user.completedTasks = user.completedTasks || [];
     if (!user.completedTasks.includes(task.id)) {
         user.completedTasks.push(task.id);
     }
 
-    // Сохраняем
     window.LocalOrder.updateUser(user);
 
-    // Закрываем модалки
     document.getElementById('task-modal').classList.remove('open');
     document.getElementById('qr-modal').classList.remove('open');
 
-    // Уведомление
     alert(`🎉 Задание выполнено! +${task.reward} баллов`);
 
-    // Обновляем страницу
     location.reload();
 };
 
-// ============================================
-// ТОП-10
-// ============================================
+
 function renderLeaderboard() {
     const user = window.LocalOrder.getCurrentUser();
     const userPoints = user?.points || 0;
@@ -493,7 +452,6 @@ function renderLeaderboard() {
         `;
     }).join('');
 
-    // Если пользователь вошёл — показываем его место
     if (user) {
         const userRank = LEADERBOARD.filter(l => l.points > userPoints).length + 1;
         if (userRank > 10) {

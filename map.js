@@ -1,8 +1,3 @@
-// ============================================
-// КАРТА ПУНКТОВ ПРИЁМА
-// ============================================
-
-// --- ДАННЫЕ ПУНКТОВ (в реальном проекте — с сервера) ---
 const POINTS = [
     {
         id: 1,
@@ -90,7 +85,6 @@ const POINTS = [
     }
 ];
 
-// --- КОНФИГ ЦВЕТОВ ---
 const CATEGORY_COLORS = {
     plastic: { color: '#4caf50', emoji: '🧴', name: 'Пластик' },
     paper: { color: '#2196f3', emoji: '📄', name: 'Бумага' },
@@ -99,11 +93,8 @@ const CATEGORY_COLORS = {
     clothes: { color: '#9c27b0', emoji: '👕', name: 'Одежда' }
 };
 
-// ============================================
-// ИНИЦИАЛИЗАЦИЯ КАРТЫ
-// ============================================
 const map = L.map('map', {
-    zoomControl: false // Переносим кнопки зума
+    zoomControl: false
 }).setView([41.311151, 69.279737], 12);
 
 L.control.zoom({ position: 'bottomright' }).addTo(map);
@@ -113,7 +104,6 @@ L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© OpenStreetMap'
 }).addTo(map);
 
-// --- СОЗДАНИЕ ИКОНКИ ---
 function createIcon(color, emoji) {
     return L.divIcon({
         className: '',
@@ -153,16 +143,12 @@ function createIcon(color, emoji) {
     });
 }
 
-// ============================================
-// РЕНДЕР ПУНКТОВ
-// ============================================
 let markers = {}; // { id: L.marker }
 let currentFilters = { plastic: true, paper: true, glass: true, batteries: true, clothes: true };
 let searchQuery = '';
 let userLocation = null;
 let currentRadius = 1;
 
-// --- СОЗДАНИЕ МАРКЕРА ---
 function createMarker(point) {
     const mainCat = point.categories[0];
     const catInfo = CATEGORY_COLORS[mainCat];
@@ -171,7 +157,6 @@ function createMarker(point) {
         icon: createIcon(catInfo.color, catInfo.emoji)
     });
 
-    // Popup
     const categoriesHTML = point.categories.map(c => {
         const info = CATEGORY_COLORS[c];
         return `<span class="popup-cat" style="background:${info.color}20; color:${info.color}; border:1px solid ${info.color}40;">${info.emoji} ${info.name}</span>`;
@@ -209,7 +194,6 @@ function createMarker(point) {
     return marker;
 }
 
-// --- ПРОЛОЖИТЬ МАРШРУТ ---
 window.routeTo = function(lat, lng) {
     window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`, '_blank');
 };
@@ -218,7 +202,6 @@ window.callPhone = function(phone) {
     window.location.href = `tel:${phone.replace(/\s/g, '')}`;
 };
 
-// --- ЦЕНТРИРОВАНИЕ НА ПУНКТЕ ---
 window.focusPoint = function(id) {
     const point = POINTS.find(p => p.id === id);
     if (!point) return;
@@ -226,24 +209,18 @@ window.focusPoint = function(id) {
     setTimeout(() => markers[id].openPopup(), 800);
 };
 
-// --- ОБНОВЛЕНИЕ ОТОБРАЖЕНИЯ ---
 function updateDisplay() {
-    // Удаляем все маркеры
     Object.values(markers).forEach(m => map.removeLayer(m));
     markers = {};
 
-    // Фильтруем
     const filtered = POINTS.filter(p => {
-        // Поиск
         if (searchQuery) {
             const q = searchQuery.toLowerCase();
             const matches = p.name.toLowerCase().includes(q) || p.address.toLowerCase().includes(q);
             if (!matches) return false;
         }
-        // Категории
         const hasActive = p.categories.some(c => currentFilters[c]);
         if (!hasActive) return false;
-        // Радиус
         if (userLocation && currentRadius < 10) {
             const dist = getDistance(userLocation.lat, userLocation.lng, p.lat, p.lng);
             if (dist > currentRadius) return false;
@@ -251,19 +228,16 @@ function updateDisplay() {
         return true;
     });
 
-    // Добавляем отфильтрованные
     filtered.forEach(p => {
         const m = createMarker(p);
         m.addTo(map);
         markers[p.id] = m;
     });
 
-    // Обновляем список
     renderPointsList(filtered);
     document.getElementById('points-count').textContent = `Найдено: ${filtered.length}`;
 }
 
-// --- РАССТОЯНИЕ (формула Haversine) ---
 function getDistance(lat1, lon1, lat2, lon2) {
     const R = 6371;
     const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -274,7 +248,6 @@ function getDistance(lat1, lon1, lat2, lon2) {
     return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 }
 
-// --- РЕНДЕР СПИСКА ---
 function renderPointsList(points) {
     const container = document.getElementById('points-list-container');
 
@@ -289,7 +262,6 @@ function renderPointsList(points) {
         return;
     }
 
-    // Сортируем по расстоянию от пользователя (если есть)
     const sorted = [...points].sort((a, b) => {
         if (!userLocation) return 0;
         const da = getDistance(userLocation.lat, userLocation.lng, a.lat, a.lng);
@@ -333,22 +305,16 @@ function renderPointsList(points) {
     }).join('');
 }
 
-// ============================================
-// ОБРАБОТЧИКИ
-// ============================================
 document.addEventListener('DOMContentLoaded', () => {
 
-    // Первая отрисовка
     updateDisplay();
 
-    // --- ПОИСК ---
     const searchInput = document.getElementById('search-input');
     searchInput.addEventListener('input', (e) => {
         searchQuery = e.target.value.trim();
         updateDisplay();
     });
 
-    // --- ФИЛЬТРЫ ---
     document.querySelectorAll('.filter-chips input[type="checkbox"]').forEach(cb => {
         cb.addEventListener('change', () => {
             currentFilters[cb.value] = cb.checked;
@@ -356,7 +322,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // --- РАДИУС ---
     document.querySelectorAll('input[name="radius"]').forEach(r => {
         r.addEventListener('change', () => {
             currentRadius = parseFloat(r.value);
@@ -370,7 +335,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // --- ГЕОЛОКАЦИЯ ---
     document.getElementById('geo-btn').addEventListener('click', () => {
         if (!navigator.geolocation) {
             alert('Геолокация не поддерживается вашим браузером');
@@ -381,7 +345,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 userLocation = { lat: pos.coords.latitude, lng: pos.coords.longitude };
                 map.flyTo([userLocation.lat, userLocation.lng], 13, { duration: 1.5 });
 
-                // Добавляем маркер "Вы здесь"
                 L.circleMarker([userLocation.lat, userLocation.lng], {
                     radius: 8,
                     fillColor: '#2196f3',
@@ -398,12 +361,10 @@ document.addEventListener('DOMContentLoaded', () => {
         );
     });
 
-    // --- КНОПКА "ПОКАЗАТЬ ВСЁ" ---
     document.getElementById('reset-view').addEventListener('click', () => {
         map.flyTo([41.311151, 69.279737], 12, { duration: 1 });
     });
 
-    // --- МОДАЛКА ДОБАВЛЕНИЯ ---
     const addModal = document.getElementById('add-modal');
     document.getElementById('open-add-modal').addEventListener('click', () => {
         const user = window.LocalOrder.getCurrentUser();
@@ -431,7 +392,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!address) return err.textContent = 'Введите адрес';
         if (selectedCats.length === 0) return err.textContent = 'Выберите хотя бы одну категорию';
 
-        // Сохраняем "заявку" в localStorage (для демо)
         const pending = JSON.parse(localStorage.getItem('localorder_pending') || '[]');
         pending.push({
             name, address, phone,

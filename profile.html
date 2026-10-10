@@ -7,6 +7,8 @@
     
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <script src="theme.js"></script>
+    <script src="i18n.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -37,7 +39,6 @@
         </aside>
 
         <main>
-            <!-- Заголовок профиля -->
             <section class="profile-hero">
                 <div class="profile-avatar" id="profile-avatar">🌱</div>
                 <div class="profile-info">
@@ -51,7 +52,6 @@
                 </div>
             </section>
 
-<!-- Действия -->
 <section class="profile-actions">
     <button class="profile-action-btn primary" id="btn-recycle">
         <i class="fa-solid fa-recycle"></i>
@@ -69,15 +69,12 @@
     </button>
 </section>
 
-<!-- Статистика -->
 <section class="profile-stats-section">
     <h2 class="section-title">📊 Статистика</h2>
     <div class="profile-stats" id="profile-stats">
-        <!-- Заполняется JS -->
     </div>
 </section>
 
-<!-- Пригласи друга -->
 <section class="invite-block">
     <div class="invite-header">
         <div class="invite-icon">🎁</div>
@@ -111,25 +108,20 @@
     </div>
 </section>
 
-<!-- История сдач -->
 <section>
     <h2 class="section-title">📜 История сдач</h2>
     <div class="history-list" id="history-list">
-        <!-- Заполняется JS -->
     </div>
 </section>
 
-            <!-- История сдач -->
             <section>
                 <h2 class="section-title">История сдач</h2>
                 <div class="history-list" id="history-list">
-                    <!-- Заполняется JS -->
                 </div>
             </section>
         </main>
     </div>
 
-    <!-- Модальное окно сдачи -->
     <div class="modal-overlay" id="recycle-modal">
         <div class="modal">
             <button class="modal-close" id="recycle-close">
@@ -159,7 +151,6 @@
         </div>
     </div>
 
-    <!-- Модальное окно авторизации (такое же, как на index.html) -->
     <div class="modal-overlay" id="auth-modal">
         <div class="modal">
             <button class="modal-close" id="modal-close">

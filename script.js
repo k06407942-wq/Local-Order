@@ -1,10 +1,3 @@
-// ============================================
-// ГЛАВНАЯ СТРАНИЦА: ЗАДАНИЯ + БАЛЛЫ + КАРТА + НАГРАДЫ
-// ============================================
-
-// ============================================
-// ЗАДАНИЯ ДЛЯ ГЛАВНОЙ (3 карточки)
-// ============================================
 const HOME_TASKS = [
     {
         id: 'park',
@@ -35,9 +28,6 @@ const HOME_TASKS = [
     }
 ];
 
-// ============================================
-// НАГРАДЫ ДЛЯ ГЛАВНОЙ (2 штуки)
-// ============================================
 const HOME_REWARDS = [
     {
         id: 'coffee10',
@@ -55,9 +45,17 @@ const HOME_REWARDS = [
     }
 ];
 
-// ============================================
-// ПОЛУЧЕНИЕ ПОЛЬЗОВАТЕЛЯ (безопасно)
-// ============================================
+const HOME_RECYCLE_POINTS = [
+    { name: 'Фандомат (Чиланзар)', address: 'ул. Бунёдкор, 7А', lat: 41.2794, lng: 69.2032, categories: 'Пластик, стекло' },
+    { name: 'Hashar Week (Сергели)', address: 'ул. Янги Сергели, 127', lat: 41.2215, lng: 69.2226, categories: 'Пластик, бумага' },
+    { name: 'Узвторцветмет (Яшнабад)', address: 'Махаллинский сход Файзли', lat: 41.1913, lng: 69.2373, categories: 'Бумага' },
+    { name: 'Пункт приёма (Юнусабад)', address: 'ул. Амира Темура, 107', lat: 41.3560, lng: 69.2880, categories: 'Бумага, пластик' },
+    { name: 'Пункт приёма (Мирабад)', address: 'Eski Otchopar passage 1, 2', lat: 41.2680, lng: 69.3121, categories: 'Стекло, бумага' },
+    { name: 'Korzinka (центр)', address: 'ул. Шота Руставели, 5', lat: 41.3110, lng: 69.2401, categories: 'Батарейки' },
+    { name: 'Пункт приёма одежды', address: 'ул. Бабура, 10', lat: 41.2930, lng: 69.2600, categories: 'Одежда' }
+];
+
+
 function getSafeUser() {
     if (window.LocalOrder && typeof window.LocalOrder.getCurrentUser === 'function') {
         return window.LocalOrder.getCurrentUser();
@@ -65,9 +63,6 @@ function getSafeUser() {
     return null;
 }
 
-// ============================================
-// РЕНДЕР ЗАДАНИЙ НА ГЛАВНОЙ
-// ============================================
 function renderHomeTasks() {
     const container = document.getElementById('home-tasks-grid');
     if (!container) return;
@@ -80,7 +75,7 @@ function renderHomeTasks() {
         const progressPercent = Math.round((task.current / task.max) * 100);
 
         return `
-            <div class="card">
+            <div class="card" data-reveal>
                 <div class="card-img ${task.imgClass}"></div>
                 <div class="card-content">
                     <h3>${task.title}</h3>
@@ -107,9 +102,6 @@ function renderHomeTasks() {
     }).join('');
 }
 
-// ============================================
-// ВЫПОЛНЕНИЕ ЗАДАНИЯ НА ГЛАВНОЙ
-// ============================================
 window.completeHomeTask = function(taskId) {
     const user = getSafeUser();
 
@@ -122,18 +114,15 @@ window.completeHomeTask = function(taskId) {
     const task = HOME_TASKS.find(t => t.id === taskId);
     if (!task) return;
 
-    // Проверка повтора
     user.completedTasks = user.completedTasks || [];
     if (user.completedTasks.includes(task.id)) {
         alert('Это задание уже выполнено');
         return;
     }
 
-    // Начисляем баллы
     user.points = (user.points || 0) + task.reward;
     user.completedTasks.push(task.id);
 
-    // Запись в историю
     user.taskHistory = user.taskHistory || [];
     user.taskHistory.unshift({
         taskId: task.id,
@@ -142,22 +131,16 @@ window.completeHomeTask = function(taskId) {
         date: new Date().toISOString()
     });
 
-    // Сохраняем
     window.LocalOrder.updateUser(user);
 
-    // Обновляем UI
     renderHomeTasks();
     updateHomeBalance();
 
-    // Обновляем шапку
     if (typeof renderAuthArea === 'function') renderAuthArea();
 
     alert(`🎉 Задание "${task.title}" выполнено!\n+${task.reward} баллов`);
 };
 
-// ============================================
-// БАЛАНС НА ГЛАВНОЙ
-// ============================================
 function updateHomeBalance() {
     const pointsEl = document.getElementById('user-points');
     if (!pointsEl) return;
@@ -166,9 +149,6 @@ function updateHomeBalance() {
     pointsEl.textContent = user?.points || 0;
 }
 
-// ============================================
-// НАГРАДЫ НА ГЛАВНОЙ
-// ============================================
 function renderHomeRewards() {
     const container = document.getElementById('home-rewards-list');
     if (!container) return;
@@ -195,9 +175,6 @@ function renderHomeRewards() {
     }).join('');
 }
 
-// ============================================
-// САЙДБАР: АККОРДЕОН
-// ============================================
 function initSidebar() {
     const menuBlocks = document.querySelectorAll('.menu-block');
     if (!menuBlocks.length) return;
@@ -219,9 +196,6 @@ function initSidebar() {
     });
 }
 
-// ============================================
-// КНОПКА "НАЙТИ ПУНКТ ПРИЕМА" — СКРОЛЛ К КАРТЕ
-// ============================================
 function initCtaButton() {
     const ctaBtn = document.querySelector('.cta-btn');
     const mapSection = document.querySelector('.map-container');
@@ -234,17 +208,12 @@ function initCtaButton() {
     }
 }
 
-// ============================================
-// КАРТА LEAFLET
-// ============================================
 function initMap() {
     const mapContainer = document.getElementById('map');
     if (!mapContainer) return;
 
-    // Проверка, не инициализирована ли карта
     if (mapContainer._leaflet_id) return;
 
-    // Проверка, что Leaflet загружен
     if (typeof L === 'undefined') return;
 
     const map = L.map('map').setView([41.311151, 69.279737], 12);
@@ -254,90 +223,104 @@ function initMap() {
         attribution: '© OpenStreetMap'
     }).addTo(map);
 
-    // Функция красивой метки
-    function createIcon(color) {
-        return L.divIcon({
-            className: '',
-            html: `
-                <div style="
-                    position: relative;
-                    width: 32px;
-                    height: 44px;
-                    filter: drop-shadow(0 6px 6px rgba(0,0,0,0.35));
-                ">
-                    <div style="
-                        position: absolute;
-                        top: 0;
-                        left: 0;
-                        width: 32px;
-                        height: 32px;
-                        background: radial-gradient(circle at 30% 25%, ${color}dd 0%, ${color} 45%, ${color} 100%);
-                        border-radius: 50%;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        font-size: 15px;
-                        color: white;
-                        box-shadow: inset 0 -3px 6px rgba(0,0,0,0.15);
-                    ">
-                        <div style="
-                            position: absolute;
-                            top: 4px;
-                            left: 6px;
-                            width: 12px;
-                            height: 8px;
-                            background: rgba(255,255,255,0.55);
-                            border-radius: 50%;
-                            filter: blur(1.5px);
-                        "></div>
-                        ♻️
-                    </div>
-                    <div style="
-                        position: absolute;
-                        top: 26px;
-                        left: 50%;
-                        transform: translateX(-50%);
-                        width: 0;
-                        height: 0;
-                        border-left: 9px solid transparent;
-                        border-right: 9px solid transparent;
-                        border-top: 16px solid ${color};
-                    "></div>
-                </div>
-            `,
-            iconSize: [32, 44],
-            iconAnchor: [16, 44],
-            popupAnchor: [0, -44]
+    HOME_RECYCLE_POINTS.forEach(point => {
+        const icon = L.divIcon({
+            className: 'home-map-leaflet-icon',
+            html: '<span class="home-map-marker"><i class="fa-solid fa-recycle"></i></span>',
+            iconSize: [40, 40],
+            iconAnchor: [20, 20],
+            popupAnchor: [0, -18]
         });
-    }
-
-    // Метки пунктов приёма
-    L.marker([41.2794, 69.2032], { icon: createIcon('#4caf50') })
-        .addTo(map)
-        .bindPopup('<b>♻️ Фандомат (Чиланзар)</b><br>ул. Бунёдкор, 7А<br>Пластик, стекло, алюминий');
-
-    L.marker([41.2680, 69.3121], { icon: createIcon('#2e7d32') })
-        .addTo(map)
-        .bindPopup('<b>♻️ Пункт приема (Мирабад)</b><br>Eski Otchopar 1, 2<br>Вторсырье, металлолом');
-
-    L.marker([41.2215, 69.2226], { icon: createIcon('#4caf50') })
-        .addTo(map)
-        .bindPopup('<b>♻️ Hashar Week (Сергели)</b><br>ул. Янги Сергели, 127<br>Макулатура, ПЭТ');
-
-    L.marker([41.1913, 69.2373], { icon: createIcon('#2e7d32') })
-        .addTo(map)
-        .bindPopup('<b>♻️ Узвторцветмет (Яшнабад)</b><br>Макулатура, вторсырье');
-
-    L.marker([41.3560, 69.2880], { icon: createIcon('#4caf50') })
-        .addTo(map)
-        .bindPopup('<b>♻️ Пункт приема (Юнусабад)</b><br>Бумага, картон, пластик');
+        const marker = L.marker([point.lat, point.lng], { icon }).addTo(map);
+        marker.bindPopup(`
+            <div class="home-point-popup">
+                <strong>${point.name}</strong>
+                <span><i class="fa-solid fa-location-dot"></i> ${point.address}</span>
+                <span><i class="fa-solid fa-recycle"></i> ${point.categories}</span>
+                <a href="https://www.google.com/maps/dir/?api=1&destination=${point.lat},${point.lng}" target="_blank" rel="noopener noreferrer">
+                    Построить маршрут <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                </a>
+            </div>
+        `);
+    });
 }
 
-// ============================================
-// ИНИЦИАЛИЗАЦИЯ
-// ============================================
+function initHomeScanner() {
+    const startButton = document.getElementById('home-scan-start');
+    const stopButton = document.getElementById('home-scan-stop');
+    const status = document.getElementById('home-scanner-status');
+    const placeholder = document.getElementById('home-scanner-placeholder');
+    const result = document.getElementById('home-scan-result');
+    const scannedCode = document.getElementById('home-scan-code');
+    if (!startButton || !stopButton || !status || !placeholder || !result || !scannedCode) return;
+
+    let scanner = null;
+    let isRunning = false;
+    let scanHandled = false;
+
+    const stopScanner = async () => {
+        if (!scanner || !isRunning) return;
+        await scanner.stop();
+        isRunning = false;
+        startButton.hidden = false;
+        startButton.disabled = false;
+        stopButton.hidden = true;
+        placeholder.hidden = false;
+    };
+
+    startButton.addEventListener('click', async () => {
+        if (typeof window.Html5Qrcode === 'undefined') {
+            status.textContent = 'Не удалось загрузить сканер. Проверьте подключение к интернету и обновите страницу.';
+            return;
+        }
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            status.textContent = 'Для доступа к камере откройте сайт по HTTPS или на localhost.';
+            return;
+        }
+
+        startButton.disabled = true;
+        status.textContent = 'Запрашиваем доступ к камере…';
+
+        try {
+            if (!scanner) scanner = new window.Html5Qrcode('home-qr-reader');
+            scanHandled = false;
+            result.hidden = true;
+            await scanner.start(
+                { facingMode: 'environment' },
+                { fps: 10, qrbox: { width: 210, height: 210 } },
+                async decodedText => {
+                    if (scanHandled) return;
+                    scanHandled = true;
+                    scannedCode.textContent = `Код: ${decodedText}`;
+                    result.hidden = false;
+                    status.textContent = 'QR-код считан. Покажите его сотруднику пункта: приложение не подтверждает сдачу и не начисляет оплату автоматически.';
+                    await stopScanner();
+                },
+                () => {}
+            );
+            isRunning = true;
+            startButton.hidden = true;
+            stopButton.hidden = false;
+            placeholder.hidden = true;
+            status.textContent = 'Наведите камеру на QR-код пункта приёма.';
+        } catch (error) {
+            startButton.disabled = false;
+            placeholder.hidden = false;
+            status.textContent = `Не удалось включить камеру: ${error.message || 'проверьте разрешение на доступ к камере'}.`;
+        }
+    });
+
+    stopButton.addEventListener('click', async () => {
+        try {
+            await stopScanner();
+            status.textContent = 'Сканирование остановлено.';
+        } catch (error) {
+            status.textContent = `Не удалось остановить камеру: ${error.message || 'попробуйте обновить страницу'}.`;
+        }
+    });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
-    // Ждём загрузки auth.js (небольшая задержка)
     setTimeout(() => {
         initSidebar();
         initCtaButton();
@@ -345,9 +328,9 @@ document.addEventListener('DOMContentLoaded', () => {
         updateHomeBalance();
         renderHomeRewards();
         initMap();
+        initHomeScanner();
     }, 50);
 
-    // Обновление при изменениях в других вкладках
     window.addEventListener('storage', () => {
         renderHomeTasks();
         updateHomeBalance();
